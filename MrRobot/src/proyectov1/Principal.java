@@ -9,12 +9,10 @@ import lejos.robotics.navigation.MovePilot;
 public class Principal {
 	
 	public static void main(String[] args) throws InterruptedException {
-		Raton mRaton = new Raton();
+		Raton jerry = new Raton();
 		//Gato mGato = new Gato();
-		Controlador controladorRaton = new Controlador(mRaton);
+		Controlador controladorRaton = new Controlador(jerry);
 		//Controlador controladorGato = new Controlador (mGato);
 		System.exit(0);
-
 	}
-
 }

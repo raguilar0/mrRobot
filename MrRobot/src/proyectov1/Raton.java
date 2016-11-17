@@ -11,74 +11,68 @@ import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.SensorMode;
 
 public class Raton {
-	static Wheel leftWheel = WheeledChassis.modelWheel(Motor.A, 5).offset(6).gearRatio(1);
-	static Wheel rightWheel = WheeledChassis.modelWheel(Motor.B, 5).offset(-6).gearRatio(1);
-	static Chassis chassis = new WheeledChassis(new Wheel[]{leftWheel, rightWheel}, WheeledChassis.TYPE_DIFFERENTIAL);
-	static MovePilot mrRobot = new MovePilot(chassis);
-	EV3ColorSensor sensorColor = new EV3ColorSensor(SensorPort.S4);
+	private final static long SLEEP_MINUTES = 300;
 	
-	float limiteInferior = (float) 0.17;
-	float limiteSuperior = (float) 0.23;
-	float limiteInferiorGanar = (float) 0.32;
-	float limiteSuperiorGanar = (float) 0.39;
-	private boolean yaGane = false;
-	public Raton(){
+	private ObtieneColor obtieneColor;
+	
+	private Color piso;
+	private Color meta;
+	
+	MovePilot jerry;
+	Wheel ruedaIzquierda;
+	Wheel ruedaDerecha;
+	Chassis chasis;
+	
+	public Raton() {
+		obtieneColor = new ObtieneColor(SensorPort.S4);
+		piso = new Color((float) 0.17, (float) 0.23);
+		meta = new Color((float) 0.32, (float) 0.39 );
 		
+		ruedaIzquierda = WheeledChassis.modelWheel(Motor.A, 5).offset(6).gearRatio(1);
+		ruedaDerecha = WheeledChassis.modelWheel(Motor.B, 5).offset(-6).gearRatio(1);
+		chasis = new WheeledChassis(new Wheel[]{ruedaIzquierda, ruedaDerecha}, WheeledChassis.TYPE_DIFFERENTIAL);
+		jerry = new MovePilot(chasis);
+		
+		jerry.setLinearSpeed(20);
+		jerry.setLinearAcceleration(5);
 	}
 	
-	public void init(){
-		while(true){
-			corre();
-			if(yaGane){
-				System.exit(0);
-			}
-			girar();
-		}
-	}
-	
-	public void corre(){
+	public void jugar() {
 		try {
-			mrRobot.setLinearSpeed(20);
-			mrRobot.setLinearAcceleration(5);
-			SensorMode color = sensorColor.getRGBMode();
-			float[] colorSample = new float[color.sampleSize()];
-			color.fetchSample(colorSample, 0);
-			while(estaLimite(colorSample[0])&&!gane(colorSample[0])){
-				System.out.println(colorSample[0]);
-				mrRobot.forward();
-				Thread.sleep(300);
-				color.fetchSample(colorSample, 0);
+			while(!heGanado()) {
+				// TODO: Me ataraparon?
+				moverse();
 			}
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public void girar(){
-		try {
-			int angulo = 0;
-			angulo = (int)((Math.random()*140)+1);
-			mrRobot.rotate(angulo);
-		} catch (Exception e) {
-			System.out.print(e);
+	private void moverse() throws InterruptedException {
+		if(piso.estaEnRango(obtieneColor.obtieneMuestra())) {
+			corre();
+		}
+		else {
+			girar();
 		}
 	}
 	
-	public boolean estaLimite(float color){
-		boolean esta = false;
-			if(color > limiteInferior && color < limiteSuperior){
-				esta = true;
-			}
-		return esta;
+	public void corre() throws InterruptedException{
+		jerry.forward();
+		Thread.sleep(Raton.SLEEP_MINUTES);
 	}
 	
-	public boolean gane(float color){
-		boolean gane = false;
-		if(color > limiteInferiorGanar && color < limiteSuperiorGanar){
-			gane = true;
-			yaGane = gane;
+	private boolean heGanado() {
+		if(meta.estaEnRango(obtieneColor.obtieneMuestra())){
+			return true;
 		}
-		return gane;
+		return false;
 	}
-
+		
+	public void girar() {
+		int angulo = 0;
+		angulo = (int)((Math.random()*140)+1);
+		jerry.rotate(angulo);
+	}
 }
