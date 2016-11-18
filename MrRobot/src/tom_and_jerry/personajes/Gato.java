@@ -10,10 +10,11 @@ import lejos.robotics.chassis.WheeledChassis;
 import lejos.robotics.navigation.MovePilot;
 
 public class Gato implements Jugador {
-    public Gato() {}
+    public Gato() {
+    }
 
     @Override
-	public boolean jugar() {
-		return false;
-	}
+    public boolean jugar() {
+        return false;
+    }
 }

@@ -72,8 +72,7 @@ public class Raton implements Jugador {
     private void desplazarse() throws InterruptedException {
         if (estaEnAreaDeJuego()) {
             mover();
-        }
-        else {
+        } else {
             girar();
         }
     }
