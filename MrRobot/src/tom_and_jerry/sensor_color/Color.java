@@ -1,8 +1,8 @@
-package proyectov1;
+package tom_and_jerry.sensor_color;
 
 public class Color {
-	float limiteInferior;
-	float limiteSuperior;
+	private float limiteInferior;
+	private float limiteSuperior;
 	
 	public Color(float limiteInferior, float limteSuperior) {
 		this.limiteInferior = limiteInferior;
