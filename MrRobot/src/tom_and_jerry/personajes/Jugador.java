@@ -1,8 +1,13 @@
 package tom_and_jerry.personajes;
 
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+
 import lejos.hardware.motor.Motor;
 import lejos.hardware.port.SensorPort;
+import lejos.remote.nxt.NXTConnection;
 import lejos.robotics.chassis.Chassis;
 import lejos.robotics.chassis.Wheel;
 import lejos.robotics.chassis.WheeledChassis;
@@ -13,6 +18,9 @@ import tom_and_jerry.sensor_color.ObtenedorColor;
 public abstract class Jugador {
     private final static long SLEEP_MILISEGS = 300;
     private MovePilot pilot;
+    protected NXTConnection conexion;
+    protected DataInputStream entrada;
+    protected DataOutputStream salida;
 
     protected ObtenedorColor obtieneColor;
     protected Color colorAreaDeJuego;
@@ -51,6 +59,8 @@ public abstract class Jugador {
 
 	abstract protected boolean heGanado();
 	abstract protected boolean hePerdido();
+	abstract protected void notificar(int codigo);
+	abstract protected int recibir();
 	
     private void desplazarse() throws InterruptedException {
         if (estaEnAreaDeJuego()) {
@@ -72,5 +82,23 @@ public abstract class Jugador {
 
     private boolean estaEnAreaDeJuego() {
         return colorAreaDeJuego.estaEnRango(obtieneColor.obtenerMuestra());
+    }
+    
+    public void setConexion(NXTConnection conexion)
+    {
+    	this.conexion = conexion;
+    	
+    	setEntrada(this.conexion.openDataInputStream());
+    	setSalida(this.conexion.openDataOutputStream());
+    }
+    
+    private void setEntrada(DataInputStream entrada)
+    {
+    	this.entrada = entrada;
+    }
+    
+    private void setSalida(DataOutputStream salida)
+    {
+    	this.salida = salida;
     }
 }
